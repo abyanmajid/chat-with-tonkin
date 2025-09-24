@@ -22,14 +22,16 @@ npx n8n
 
 2. Copy the contents of `n8n.json` and import it to a new, empty n8n workflow
 
-3. Clone the repository locally
+3. The n8n workflow is configured to use the following external services: (1) Google Drive, (2) AWS Bedrock, and, and (3) OpenAI. You need to configure your secrets for each and every one of these services to make the workflow run. Please consult the relevant n8n documentation.
+
+4. Clone the repository locally
 
 ```
 git clone https://github.com/abyanmajid/chat-with-tonkin.git
 cd chat-with-tonkin
 ```
 
-4. Create a Python virtual environment and install UI dependencies
+5. Create a Python virtual environment and install UI dependencies
 
 ```
 python3 -m venv venv
@@ -37,7 +39,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-5. Serve the UI
+6. Serve the UI
 
 ```
 streamlit run ui.py
