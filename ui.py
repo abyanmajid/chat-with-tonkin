@@ -23,7 +23,7 @@ def send_message_to_llm(session_id, message):
 
 
 def main():
-    st.title("Chat with LLM")
+    st.title("Chat with Tonkin")
 
     # Initialize session state
     if "messages" not in st.session_state:
@@ -45,13 +45,22 @@ def main():
         with st.chat_message("user"):
             st.write(user_input)
 
-        # Get LLM response
-        llm_response = send_message_to_llm(st.session_state.session_id, user_input)
+        # Loading state and streaming effect
+        with st.chat_message("assistant"):
+            with st.spinner("Tonkin is thinking..."):
+                llm_response = send_message_to_llm(
+                    st.session_state.session_id, user_input
+                )
+            stream_placeholder = st.empty()
+            displayed = ""
+            for char in llm_response:
+                displayed += char
+                stream_placeholder.write(displayed)
+                import time
 
+                time.sleep(0.018)
         # Add LLM response to chat history
         st.session_state.messages.append({"role": "assistant", "content": llm_response})
-        with st.chat_message("assistant"):
-            st.write(llm_response)
 
 
 if __name__ == "__main__":
