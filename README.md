@@ -2,6 +2,9 @@
 
 A simple RAG proof-of-concept for Tonkin built via n8n and vibe-coding.
 
+<img width="400" height="405" alt="image" src="https://github.com/user-attachments/assets/1c4b7db5-98c3-4ab2-ac52-042f6cfe9ce9" />
+
+
 ## Quickstart
 
 ### Prerequisites
@@ -43,4 +46,10 @@ pip install -r requirements.txt
 
 ```
 streamlit run ui.py
+```
+
+## Example Prompt
+
+```
+How does The Data Cyan-tists plan to go about conducting their research to find the solution for Tonkin?
 ```
