@@ -2,7 +2,11 @@
 
 A simple RAG proof-of-concept for Tonkin built via n8n and vibe-coding.
 
+## Showcase
+
 <img width="400" height="405" alt="image" src="https://github.com/user-attachments/assets/1c4b7db5-98c3-4ab2-ac52-042f6cfe9ce9" />
+
+<img width="689" height="789" alt="image" src="https://github.com/user-attachments/assets/a10c3307-cbd5-4451-8331-eb4e61d9e271" />
 
 
 ## Quickstart
