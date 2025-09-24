@@ -4,7 +4,7 @@ A simple RAG proof-of-concept for Tonkin built via n8n and vibe-coding.
 
 ## Quickstart
 
-### Pre-requisites
+### Prerequisites
 
 This quickstart guide assumes you have the following installed on your machine:
 
