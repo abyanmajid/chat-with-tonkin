@@ -1,0 +1,572 @@
+{
+    "name": "My workflow",
+    "nodes": [
+        {
+            "parameters": {},
+            "type": "n8n-nodes-base.manualTrigger",
+            "typeVersion": 1,
+            "position": [
+                0,
+                0
+            ],
+            "id": "d36e8528-d93e-42b6-bb54-d81fdec18f81",
+            "name": "When clicking ‘Execute workflow’"
+        },
+        {
+            "parameters": {
+                "resource": "fileFolder",
+                "returnAll": true,
+                "filter": {
+                    "folderId": {
+                        "__rl": true,
+                        "value": "1k09PdV2f7FgbnzeNJ-vIj07jglNT4gx6",
+                        "mode": "list",
+                        "cachedResultName": "tonkin",
+                        "cachedResultUrl": "https://drive.google.com/drive/folders/1k09PdV2f7FgbnzeNJ-vIj07jglNT4gx6"
+                    }
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                208,
+                0
+            ],
+            "id": "e73ca4eb-6686-4025-a4f0-c3b3f0ba0c1d",
+            "name": "Search files and folders",
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "jZ2HQuJ18ASey4RB",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "operation": "download",
+                "fileId": {
+                    "__rl": true,
+                    "value": "={{ $json.id }}",
+                    "mode": "id"
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.googleDrive",
+            "typeVersion": 3,
+            "position": [
+                416,
+                0
+            ],
+            "id": "6205174e-5dff-49aa-b8be-ad69e5fe3233",
+            "name": "Get Content",
+            "credentials": {
+                "googleDriveOAuth2Api": {
+                    "id": "jZ2HQuJ18ASey4RB",
+                    "name": "Google Drive account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "options": {}
+            },
+            "type": "n8n-nodes-base.splitInBatches",
+            "typeVersion": 3,
+            "position": [
+                624,
+                0
+            ],
+            "id": "dff5a7b4-6322-4a3c-9352-90324ccdf86b",
+            "name": "Loop Over Items"
+        },
+        {
+            "parameters": {
+                "mode": "insert",
+                "memoryKey": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "vector_store_key"
+                }
+            },
+            "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+            "typeVersion": 1.3,
+            "position": [
+                832,
+                96
+            ],
+            "id": "871a72a4-9e4f-431f-bd04-b04fd7daff17",
+            "name": "Simple Vector Store"
+        },
+        {
+            "parameters": {
+                "model": "amazon.titan-embed-text-v2:0"
+            },
+            "type": "@n8n/n8n-nodes-langchain.embeddingsAwsBedrock",
+            "typeVersion": 1,
+            "position": [
+                832,
+                336
+            ],
+            "id": "2c7d1e45-d63f-47db-9aae-aca281f47bae",
+            "name": "Embeddings AWS Bedrock",
+            "credentials": {
+                "aws": {
+                    "id": "UaMI3ID0o5mEO5T2",
+                    "name": "AWS account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "dataType": "binary",
+                "textSplittingMode": "custom",
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+            "typeVersion": 1.1,
+            "position": [
+                992,
+                336
+            ],
+            "id": "6e677068-b064-45cd-b45a-7327f128ef2f",
+            "name": "Default Data Loader"
+        },
+        {
+            "parameters": {
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+            "typeVersion": 1,
+            "position": [
+                992,
+                512
+            ],
+            "id": "236e05eb-f6ec-4391-9caa-e7106b0a2a09",
+            "name": "Recursive Character Text Splitter"
+        },
+        {
+            "parameters": {
+                "content": "# Ingest Data",
+                "height": 768,
+                "width": 1392,
+                "color": 5
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "position": [
+                -112,
+                -96
+            ],
+            "typeVersion": 1,
+            "id": "0e2b9d1e-1700-4418-b4b9-28cd6912f598",
+            "name": "Sticky Note"
+        },
+        {
+            "parameters": {
+                "options": {
+                    "systemMessage": "You are a helpful assistant. Your job is to answer questions using information that can be found in the vector store tool. So call the tool each time you are asked a question to ensure you are providing the user accurate information.\n\nFor each respponse, please return the associated source document name you got your answer from i.e.,:\n\n**Source:** {source}\n\nPlease be friendly and do not provide an answer for questions of which answer cannot be found in the vector store. Simply tell the user that you do not have the information to answer their question."
+                }
+            },
+            "type": "@n8n/n8n-nodes-langchain.agent",
+            "typeVersion": 2.2,
+            "position": [
+                464,
+                768
+            ],
+            "id": "885f7a69-a4e3-4200-b982-10c94fdf0624",
+            "name": "AI Agent"
+        },
+        {
+            "parameters": {},
+            "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+            "typeVersion": 1.3,
+            "position": [
+                528,
+                992
+            ],
+            "id": "f3e66479-eec6-4584-b188-b7244d6f7e37",
+            "name": "Simple Memory"
+        },
+        {
+            "parameters": {
+                "description": "Call this tool to access the vector store to answer the user's question"
+            },
+            "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+            "typeVersion": 1.1,
+            "position": [
+                672,
+                944
+            ],
+            "id": "8be0a8e8-6e98-41ba-924c-d4373ea3f912",
+            "name": "Answer questions with a vector store"
+        },
+        {
+            "parameters": {
+                "memoryKey": {
+                    "__rl": true,
+                    "mode": "list",
+                    "value": "vector_store_key"
+                }
+            },
+            "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+            "typeVersion": 1.3,
+            "position": [
+                512,
+                1152
+            ],
+            "id": "a6700721-0cb5-40a5-9d37-2b613a1c30d6",
+            "name": "Simple Vector Store1"
+        },
+        {
+            "parameters": {
+                "model": "amazon.titan-embed-text-v2:0"
+            },
+            "type": "@n8n/n8n-nodes-langchain.embeddingsAwsBedrock",
+            "typeVersion": 1,
+            "position": [
+                624,
+                1312
+            ],
+            "id": "1644e677-844a-46ca-88fd-dd035bb4c65b",
+            "name": "Embeddings AWS Bedrock1",
+            "credentials": {
+                "aws": {
+                    "id": "UaMI3ID0o5mEO5T2",
+                    "name": "AWS account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "model": {
+                    "__rl": true,
+                    "value": "gpt-4o-mini",
+                    "mode": "list",
+                    "cachedResultName": "gpt-4o-mini"
+                },
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1.2,
+            "position": [
+                336,
+                976
+            ],
+            "id": "5e119bf7-7474-4e82-af66-c99ea0000fe6",
+            "name": "OpenAI Chat Model",
+            "credentials": {
+                "openAiApi": {
+                    "id": "tFDH8OKZHJYUaP3U",
+                    "name": "OpenAi account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "model": {
+                    "__rl": true,
+                    "value": "gpt-4o-mini",
+                    "mode": "list",
+                    "cachedResultName": "gpt-4o-mini"
+                },
+                "options": {}
+            },
+            "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+            "typeVersion": 1.2,
+            "position": [
+                848,
+                1152
+            ],
+            "id": "4da43118-d137-47c0-9119-d79109b4bdbc",
+            "name": "OpenAI Chat Model1",
+            "credentials": {
+                "openAiApi": {
+                    "id": "tFDH8OKZHJYUaP3U",
+                    "name": "OpenAi account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "content": "# Chat",
+                "height": 784,
+                "width": 1392,
+                "color": 3
+            },
+            "type": "n8n-nodes-base.stickyNote",
+            "position": [
+                -112,
+                704
+            ],
+            "typeVersion": 1,
+            "id": "0a5e9c1e-ad81-4e1d-b890-9728f31c4cff",
+            "name": "Sticky Note1"
+        },
+        {
+            "parameters": {
+                "multipleMethods": true,
+                "httpMethod": [
+                    "POST"
+                ],
+                "path": "chat",
+                "responseMode": "responseNode",
+                "options": {
+                    "allowedOrigins": "*"
+                }
+            },
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2.1,
+            "position": [
+                80,
+                768
+            ],
+            "id": "924285d2-57c2-47cb-83c5-4fffd3ceb426",
+            "name": "Webhook",
+            "webhookId": "e9cf6aa9-5f0a-4b8f-a5d4-fe2e7bc9ca2c"
+        },
+        {
+            "parameters": {
+                "options": {}
+            },
+            "type": "n8n-nodes-base.respondToWebhook",
+            "typeVersion": 1.4,
+            "position": [
+                816,
+                768
+            ],
+            "id": "e7b65a65-e642-4df0-ae36-624ba6e5fe2c",
+            "name": "Respond to Webhook"
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        {
+                            "id": "1caff8f4-eb6c-493d-a9bf-1c939a14138e",
+                            "name": "=sessionId",
+                            "value": "={{ $json?.sessionId || $json.body.sessionId }}",
+                            "type": "string"
+                        },
+                        {
+                            "id": "6766a921-0dfe-4355-80ae-d5b542a6870f",
+                            "name": "chatInput",
+                            "value": "={{ $json?.chatInput || $json.body.chatInput }}",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3.4,
+            "position": [
+                272,
+                768
+            ],
+            "id": "415b4f76-0921-4b77-a85a-e0b63d6065af",
+            "name": "Edit Fields"
+        }
+    ],
+    "pinData": {},
+    "connections": {
+        "When clicking ‘Execute workflow’": {
+            "main": [
+                [
+                    {
+                        "node": "Search files and folders",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Search files and folders": {
+            "main": [
+                [
+                    {
+                        "node": "Get Content",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Get Content": {
+            "main": [
+                [
+                    {
+                        "node": "Loop Over Items",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Loop Over Items": {
+            "main": [
+                [],
+                [
+                    {
+                        "node": "Simple Vector Store",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Embeddings AWS Bedrock": {
+            "ai_embedding": [
+                [
+                    {
+                        "node": "Simple Vector Store",
+                        "type": "ai_embedding",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Default Data Loader": {
+            "ai_document": [
+                [
+                    {
+                        "node": "Simple Vector Store",
+                        "type": "ai_document",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Recursive Character Text Splitter": {
+            "ai_textSplitter": [
+                [
+                    {
+                        "node": "Default Data Loader",
+                        "type": "ai_textSplitter",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Simple Vector Store": {
+            "main": [
+                [
+                    {
+                        "node": "Loop Over Items",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Simple Memory": {
+            "ai_memory": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_memory",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Answer questions with a vector store": {
+            "ai_tool": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_tool",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Simple Vector Store1": {
+            "ai_vectorStore": [
+                [
+                    {
+                        "node": "Answer questions with a vector store",
+                        "type": "ai_vectorStore",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Embeddings AWS Bedrock1": {
+            "ai_embedding": [
+                [
+                    {
+                        "node": "Simple Vector Store1",
+                        "type": "ai_embedding",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI Chat Model": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI Chat Model1": {
+            "ai_languageModel": [
+                [
+                    {
+                        "node": "Answer questions with a vector store",
+                        "type": "ai_languageModel",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "Edit Fields",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "AI Agent": {
+            "main": [
+                [
+                    {
+                        "node": "Respond to Webhook",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Edit Fields": {
+            "main": [
+                [
+                    {
+                        "node": "AI Agent",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "active": true,
+    "settings": {
+        "executionOrder": "v1"
+    },
+    "versionId": "d4159a62-2226-4928-bd56-c1802054c586",
+    "meta": {
+        "templateCredsSetupCompleted": true,
+        "instanceId": "7d48325c96e8b316c506e594d915e0b1f2b0b90032213301b1d994a00fc92906"
+    },
+    "id": "g56wliz2HUZTVLrK",
+    "tags": []
+}

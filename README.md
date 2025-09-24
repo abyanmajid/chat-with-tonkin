@@ -1,0 +1,44 @@
+# Chat with Tonkin
+
+A simple RAG proof-of-concept for Tonkin built via n8n and vibe-coding.
+
+## Quickstart
+
+### Pre-requisites
+
+This quickstart guide assumes you have the following installed on your machine:
+
+- Python >= v3
+- Node >= v22
+- NPM >= v11
+
+### Local Setup
+
+1. Run n8n locally (this will also install it if you don't yet have it):
+
+```
+npx n8n
+```
+
+2. Copy the contents of `n8n.json` and import it to a new, empty n8n workflow
+
+3. Clone the repository locally
+
+```
+git clone https://github.com/abyanmajid/chat-with-tonkin.git
+cd chat-with-tonkin
+```
+
+4. Create a Python virtual environment and install UI dependencies
+
+```
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+5. Serve the UI
+
+```
+streamlit run ui.py
+```
